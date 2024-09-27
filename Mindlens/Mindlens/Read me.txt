@@ -1,0 +1,80 @@
+Libraries Used in the Task:
+
+Streamlit (streamlit):
+
+Purpose: Streamlit is a Python framework used for creating interactive web apps quickly and easily. It’s designed for data scientists and developers to turn their data scripts into web applications with minimal effort.
+Usage: In the code, Streamlit is used to create the interface for the user to upload images, view detection results, and interact with the application.
+
+
+PyTorch (torch):
+
+Purpose: PyTorch is a deep learning framework that provides flexible and fast computations, primarily for building and training neural networks.
+Usage: In this case, it's used to load the pre-trained YOLOv5 object detection model, which can identify objects in images.
+
+
+OpenCV (cv2):
+
+Purpose: OpenCV (Open Source Computer Vision) is a library for computer vision tasks such as image processing, video capturing, and object detection.
+Usage: OpenCV is used to read and decode the uploaded image and convert it to the required color format before passing it to the models.
+
+
+Pandas (pandas):
+
+Purpose: Pandas is a powerful data manipulation library that allows for working with structured data, such as tables (DataFrames) or time series data.
+Usage: It’s used here to organize and display the detected objects and their counts in a table format.
+
+
+MediaPipe (mediapipe):
+
+Purpose: MediaPipe is a cross-platform framework for building multimodal machine learning pipelines, including real-time face detection, pose estimation, hand tracking, etc.
+Usage: MediaPipe Pose is used for human pose estimation, identifying key points (landmarks) on the body, such as shoulders and hips, to analyze posture and back support.
+
+
+NumPy (numpy):
+
+Purpose: NumPy is a library for numerical computations in Python, offering support for large multi-dimensional arrays and matrices.
+Usage: In this context, it is used to handle and convert image data from the uploaded file to the format required by OpenCV.
+
+
+Step-by-Step Working of the Code (Theoretical Explanation):
+
+1. Streamlit App Initialization and Title Display:
+The app begins by importing all necessary libraries and setting up the Streamlit interface. The st.title function displays a title ("Object Detection and Back Support Analysis") at the top of the web app, informing users of the app’s purpose.
+
+2. Image Upload Interface:
+Streamlit’s st.file_uploader creates an interface where users can upload an image file (in formats like JPG, JPEG, PNG). Once the user uploads an image, the file is stored for further processing.
+
+If no image is uploaded, the rest of the analysis won’t run. Only when a valid image is uploaded does the application proceed to the next step.
+
+3. Image Processing:
+Once the image is uploaded, OpenCV (cv2) is used to read the image into a format that can be processed by other libraries. The image is first converted into a NumPy array and then decoded into an image using OpenCV's cv2.imdecode() function.
+
+Additionally, the image is converted from BGR (OpenCV’s default color space) to RGB format, since most image-processing models (including YOLOv5 and MediaPipe Pose) expect the image to be in RGB format.
+
+4. Object Detection Using YOLOv5:
+After the image is processed, the pre-trained YOLOv5 model is applied to detect objects in the image. YOLOv5 (You Only Look Once) is an object detection algorithm that divides an image into grids and predicts bounding boxes and class probabilities for objects within those grids.
+
+The YOLO model identifies objects in the image, drawing bounding boxes around them and assigning labels (e.g., "monitor", "laptop", "keyboard"). These detections are output as a DataFrame, which contains details such as the coordinates of bounding boxes, confidence scores, and labels of the detected objects.
+
+5. Filtering Objects of Interest:
+The code then focuses on specific objects of interest—screens, laptops, keyboards, and mice. It filters the objects detected by YOLOv5 to count only those relevant to the task (like 'monitor', 'laptop', 'keyboard', and 'mouse').
+
+These counts are stored in a dictionary and then converted into a table using Pandas. This table is displayed on the Streamlit interface, showing how many of each object were detected in the image.
+
+6. Pose Estimation Using MediaPipe:
+The next step involves human pose estimation using MediaPipe Pose. MediaPipe Pose detects key points (landmarks) on a person's body, such as the shoulders, hips, knees, etc.
+
+In this task, the landmarks for the upper back (shoulders) and lower back (hips) are analyzed. The app checks the positions of these landmarks to determine if the person’s back is supported by a chair, based on the assumption that a chair would be near the right edge of the image.
+
+7. Back Support Analysis:
+The position of the shoulders and hips is used to estimate whether the upper back, mid-back, and lower back are supported. If these body parts are close to the right edge of the image (as per a threshold), the code assumes that the back is supported by a chair.
+
+The code performs this check for:
+
+Upper back: The midpoint between the left and right shoulder positions.
+Mid back: The calculated midpoint between the shoulders.
+Lower back: The midpoint between the left and right hips.
+The result for each section of the back (upper, mid, lower) is displayed as either "Supported" or "Not Supported" based on the estimated pose.
+
+8. Displaying the Processed Image:
+Finally, the app shows the image with the detected objects and bounding boxes drawn around them. YOLOv5’s results.render() function is used to draw the detections directly on the image, which is then displayed in the Streamlit interface.

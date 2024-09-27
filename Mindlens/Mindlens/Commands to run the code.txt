@@ -1,0 +1,8 @@
+1] open command prompt and use this command to install all the libraries needed to run the code :-
+
+pip install -r requirements.txt
+
+
+2] After installing the libraries type this command on the command prompt  to run the web app :-
+
+streamlit run app.py
